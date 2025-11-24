@@ -2,18 +2,18 @@
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
-    Animated,
-    Dimensions,
-    Easing,
-    LayoutAnimation,
-    NativeScrollEvent,
-    NativeSyntheticEvent,
-    Platform,
-    Pressable,
-    ScrollView,
-    Text,
-    UIManager,
-    View
+  Animated,
+  Dimensions,
+  Easing,
+  LayoutAnimation,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  UIManager,
+  View
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -64,8 +64,8 @@ type Slide = {
   key: string;
   title: string;
   subtitle: string;
-  points: string[];     // benefit chips
-  more: string;         // expandable paragraph
+  points: string[];     
+  more: string;         
 };
 
 const slides: Slide[] = [
@@ -146,75 +146,103 @@ export default function Onboarding() {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 pt-20 bg-white">
       <AnimatedBackground />
 
-      {/* Brand */}
-      <View className="h-40 justify-center px-6">
-        <Text className="text-blue-900 text-2xl font-extrabold">Vel Infotech</Text>
-        <Text className="text-gray-600 mt-1">Learn • Practice • Get Placed</Text>
+      {/* Brand – already centered */}
+      <View className="h-40 justify-center items-center px-6">
+        <Text className="text-blue-900 text-2xl font-extrabold text-center">
+          Vel Infotech
+        </Text>
+        <Text className="text-gray-600 mt-1 text-center">
+          Learn • Practice • Get Placed
+        </Text>
       </View>
 
-      {/* Slides */}
-      <ScrollView
-        ref={ref}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-        className="-mt-4"
-      >
-        {slides.map((s) => (
-          <View key={s.key} style={{ width }} className="px-6">
-            <View className="bg-white/90 rounded-3xl shadow-lg p-6 border border-gray-100">
-              <Text className="text-2xl font-extrabold text-blue-900">{s.title}</Text>
-              <Text className="text-gray-600 mt-3 leading-6">{s.subtitle}</Text>
-
-              {/* Benefit chips */}
-              <View className="flex-row flex-wrap mt-4">
-                {s.points.map(p => <Chip key={p} label={p} />)}
-              </View>
-
-              {/* Decorative lines */}
-              <View className="mt-4">
-                <View className="h-[3px] w-24 bg-blue-600 rounded-full" />
-                <View className="h-[3px] w-12 bg-indigo-400 rounded-full mt-2" />
-              </View>
-
-              {/* Learn more (expand/collapse) */}
-              <Pressable onPress={() => toggleMore(s.key)} className="mt-4">
-                <Text className="text-blue-700 font-semibold">
-                  {openMore[s.key] ? "Hide details" : "Learn more"}
+      {/* ===== MAIN CONTENT BLOCK CENTERED VERTICALLY ===== */}
+      <View className="flex-1 justify-center">
+        {/* Slides */}
+        <ScrollView
+          ref={ref}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onScroll={onScroll}
+          scrollEventThrottle={16}
+          className=""
+          contentContainerStyle={{ alignItems: "center" }}  // centers slide card vertically inside its area
+        >
+          {slides.map((s) => (
+            <View key={s.key} style={{ width }} className="px-6">
+              <View className="bg-white/90 rounded-3xl shadow-lg p-6 border border-gray-100">
+                <Text className="text-2xl font-extrabold text-blue-900">
+                  {s.title}
                 </Text>
-              </Pressable>
-              {openMore[s.key] && (
-                <Text className="text-gray-600 mt-2 leading-6">{s.more}</Text>
-              )}
+                <Text className="text-gray-600 mt-3 leading-6">
+                  {s.subtitle}
+                </Text>
+
+                {/* Benefit chips */}
+                <View className="flex-row flex-wrap mt-4">
+                  {s.points.map(p => (
+                    <Chip key={p} label={p} />
+                  ))}
+                </View>
+
+                {/* Decorative lines */}
+                <View className="mt-4">
+                  <View className="h-[3px] w-24 bg-blue-600 rounded-full" />
+                  <View className="h-[3px] w-12 bg-indigo-400 rounded-full mt-2" />
+                </View>
+
+                {/* Learn more (expand/collapse) */}
+                <Pressable onPress={() => toggleMore(s.key)} className="mt-4">
+                  <Text className="text-blue-700 font-semibold">
+                    {openMore[s.key] ? "Hide details" : "Learn more"}
+                  </Text>
+                </Pressable>
+                {openMore[s.key] && (
+                  <Text className="text-gray-600 mt-2 leading-6">
+                    {s.more}
+                  </Text>
+                )}
+              </View>
             </View>
-          </View>
-        ))}
-      </ScrollView>
+          ))}
+        </ScrollView>
 
-      {/* Dots */}
-      <View className="flex-row justify-center mt-5">
-        {slides.map((_, i) => (
-          <View key={i} className={`h-2 rounded-full mx-1 ${i === page ? "bg-blue-600 w-6" : "bg-gray-300 w-2"}`} />
-        ))}
-      </View>
+        {/* Dots */}
+        <View className="flex-row justify-center mt-5">
+          {slides.map((_, i) => (
+            <View
+              key={i}
+              className={`h-2 rounded-full mx-1 ${
+                i === page ? "bg-blue-600 w-6" : "bg-gray-300 w-2"
+              }`}
+            />
+          ))}
+        </View>
 
-      {/* Actions */}
-      <View className="px-6 mt-6 mb-8">
-        <Pressable className="bg-blue-600 rounded-2xl py-4 active:opacity-90" onPress={next}>
-          <Text className="text-white text-center font-semibold">
-            {page === slides.length - 1 ? "Get Started" : "Next"}
-          </Text>
-        </Pressable>
+        {/* Actions */}
+        <View className="px-6 mt-6 mb-8">
+          <Pressable
+            className="bg-blue-600 rounded-2xl py-4 active:opacity-90"
+            onPress={next}
+          >
+            <Text className="text-white text-center font-semibold">
+              {page === slides.length - 1 ? "Get Started" : "Next"}
+            </Text>
+          </Pressable>
 
-        <Pressable className="mt-3" onPress={() => router.replace("/(auth)/login")}>
-          <Text className="text-center text-gray-500">Skip</Text>
-        </Pressable>
+          <Pressable
+            className="mt-3"
+            onPress={() => router.replace("/(auth)/login")}
+          >
+            <Text className="text-center text-gray-500">Skip</Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   );
 }
+
