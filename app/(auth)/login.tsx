@@ -250,7 +250,7 @@ export default function Login() {
           </Text>
 
           {/* Social buttons with icons */}
-          <View className="flex-row justify-center space-x-3 mb-8">
+          <View className="flex-row justify-center gap-3 space-x-3 mb-8">
             <Pressable className="flex-row items-center justify-center px-5 py-2.5 rounded-full border border-gray-200 bg-[#f8fafc]">
               <AntDesign
                 name="google"
