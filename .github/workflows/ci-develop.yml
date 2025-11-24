@@ -1,0 +1,57 @@
+name: CI (develop - lint · typecheck · tests · expo)
+
+on:
+  pull_request:
+    branches: [ develop ]
+  push:
+    branches: [ develop ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-develop-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    name: Checks
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # Typecheck only if tsconfig.json exists
+      - name: Typecheck
+        run: |
+          if [ -f tsconfig.json ]; then
+            npm run typecheck
+          else
+            echo "No tsconfig.json — skipping typecheck."
+          fi
+
+      # Tests only if Jest is present
+      - name: Tests
+        run: |
+          if [ -f jest.config.js ] || [ -f jest.config.ts ] || jq -e '.devDependencies.jest // .dependencies.jest' package.json > /dev/null 2>&1; then
+            npm test -- --ci --watchAll=false
+          else
+            echo "No Jest config/dependency — skipping tests."
+          fi
+
+      - name: Expo Doctor
+        run: npx expo-doctor
